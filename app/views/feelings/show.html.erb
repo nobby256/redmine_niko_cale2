@@ -32,13 +32,18 @@
        <%= text_area 'comment', 'comments', :cols => 48, :rows => 3 %>
     </div>
     <p><%= submit_tag l(:button_add) %>
-    <%= link_to l(:label_preview), 
-                   { :url => {:action => :edit_comment, :id => @feeling.id, :project_id=>((@project && @project.identifier) || nil)},
-                     :method => :post,
-                     :update => :preview,
-                     :with => "Form.serialize('add_comment_form')",
-                     :remote => true
-                   } %></p>
+    <a id="preview_link"><%= l(:label_preview) %></a>
+<script type="text/javascript">
+$(function() {
+  $("#preview_link").bind("click", function() {
+    var params = $("#add_comment_form").serialize();
+    $.post('<%= url_for({:action => :edit_comment, :id => @feeling.id, :project_id=>((@project && @project.identifier) || nil)}) %>', params, function(data) {
+      $("#preview").html(data);
+    });
+    return false;
+  });
+})
+</script>
   <% end %>
   <div id="preview"></div>
 <% end %>
